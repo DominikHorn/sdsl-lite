@@ -288,13 +288,13 @@ class int_vector_buffer {
   }
 
   // Forward declaration
-  class reference;
+  class sdsl_reference;
 
   //! [] operator
   /*! \param i Index the i-th integer of length width().
    *  \return A reference to the i-th integer of length width().
    */
-  reference operator[](uint64_t idx) { return reference(this, idx); }
+  sdsl_reference operator[](uint64_t idx) { return sdsl_reference(this, idx); }
 
   //! Appends the given element value to the end of the int_vector_buffer
   void push_back(const uint64_t value) { write(m_size, value); }
@@ -363,16 +363,16 @@ class int_vector_buffer {
     }
   }
 
-  class reference {
+  class sdsl_reference {
     friend class int_vector_buffer<t_width>;
 
    private:
     int_vector_buffer<t_width>* const m_int_vector_buffer = nullptr;
     uint64_t m_idx = 0;
 
-    reference() {}
+    sdsl_reference() {}
 
-    reference(int_vector_buffer<t_width>* _int_vector_buffer, uint64_t _idx)
+    sdsl_reference(int_vector_buffer<t_width>* _int_vector_buffer, uint64_t _idx)
         : m_int_vector_buffer(_int_vector_buffer), m_idx(_idx) {}
 
    public:
@@ -380,16 +380,16 @@ class int_vector_buffer {
     operator uint64_t() const { return m_int_vector_buffer->read(m_idx); }
 
     //! Assignment operator for write operations
-    reference& operator=(const uint64_t& val) {
+    sdsl_reference& operator=(const uint64_t& val) {
       m_int_vector_buffer->write(m_idx, val);
       return *this;
     }
 
     //! Assignment operator
-    reference& operator=(reference& x) { return *this = (uint64_t)(x); };
+    sdsl_reference& operator=(sdsl_reference& x) { return *this = (uint64_t)(x); };
 
     //! Prefix increment of the proxy object
-    reference& operator++() {
+    sdsl_reference& operator++() {
       uint64_t x = m_int_vector_buffer->read(m_idx);
       m_int_vector_buffer->write(m_idx, x + 1);
       return *this;
@@ -403,7 +403,7 @@ class int_vector_buffer {
     }
 
     //! Prefix decrement of the proxy object
-    reference& operator--() {
+    sdsl_reference& operator--() {
       uint64_t x = m_int_vector_buffer->read(m_idx);
       m_int_vector_buffer->write(m_idx, x - 1);
       return *this;
@@ -417,24 +417,24 @@ class int_vector_buffer {
     }
 
     //! Add assign from the proxy object
-    reference& operator+=(const uint64_t x) {
+    sdsl_reference& operator+=(const uint64_t x) {
       uint64_t w = m_int_vector_buffer->read(m_idx);
       m_int_vector_buffer->write(m_idx, w + x);
       return *this;
     }
 
     //! Subtract assign from the proxy object
-    reference& operator-=(const uint64_t x) {
+    sdsl_reference& operator-=(const uint64_t x) {
       uint64_t w = m_int_vector_buffer->read(m_idx);
       m_int_vector_buffer->write(m_idx, w - x);
       return *this;
     }
 
-    bool operator==(const reference& x) const {
+    bool operator==(const sdsl_reference& x) const {
       return (uint64_t) * this == (uint64_t)x;
     }
 
-    bool operator<(const reference& x) const {
+    bool operator<(const sdsl_reference& x) const {
       return (uint64_t) * this < (uint64_t)x;
     }
   };
@@ -447,7 +447,7 @@ class int_vector_buffer {
    public:
     using iterator_category = std::random_access_iterator_tag;
     using pointer = value_type*;
-    using reference = reference;
+    using reference = sdsl_reference;
 
     iterator() = delete;
     iterator(int_vector_buffer<t_width>& ivb, uint64_t idx = 0)
